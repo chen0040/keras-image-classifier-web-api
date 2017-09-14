@@ -1,0 +1,3 @@
+graft keras_image_classifier_web/templates
+graft keras_image_classifier_web/static
+include keras_image_classifier_web/schema.sql
