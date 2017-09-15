@@ -3,10 +3,10 @@ from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Activation, Flatten, Dense, Dropout
 from keras import backend as K
 
-img_width, img_height=150, 150
+img_width, img_height = 150, 150
 
-train_data_dir = 'data/training'
-validation_data_dir = 'data/validation'
+train_data_dir = 'bi_classifier_data/training'
+validation_data_dir = 'bi_classifier_data/validation'
 nb_train_samples = 2000
 nb_validation_samples = 800
 nb_test_samples = 400
@@ -71,6 +71,6 @@ model.fit_generator(train_datagen,
                     validation_steps=nb_validation_samples // batch_size)
 
 model_json = model.to_json()
-open('models/cnn_classifier_architecture.json','w').write(model_json)
-model.save_weights('models/cnn_classifier_weights.h5', overwrite=True)
+open('models/cnn_bi_classifier_architecture.json','w').write(model_json)
+model.save_weights('models/cnn_bi_classifier_weights.h5', overwrite=True)
 

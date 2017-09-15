@@ -130,7 +130,7 @@ def upload_file(token):
     <!doctype html>
     <title>Upload new File</title>
     <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-data>
+    <form method=post enctype=multipart/form-bi_classifier_data>
       <p><input type=file name=file>
          <input type=submit value=Upload>
     </form>
