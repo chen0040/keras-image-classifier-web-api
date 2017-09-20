@@ -1,106 +1,32 @@
 import os
+from keras.models import model_from_json
 import sqlite3
 import uuid
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
-     render_template, flash
+    render_template, flash
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 
 UPLOAD_FOLDER = '../uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
-app = Flask(__name__) # create the application instance :)
-app.config.from_object(__name__) # load config from this file , flaskr.py
+app = Flask(__name__)  # create the application instance :)
+app.config.from_object(__name__)  # load config from this file , flaskr.py
 
 # Load default config and override config from an environment variable
-app.config.update(dict(
-    DATABASE=os.path.join(app.root_path, 'keras_image_projects.db'),
-    SECRET_KEY='development-key',
-    USERNAME='root',
-    PASSWORD='chen0469'
-))
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
+model = model_from_json(open(os.path.join('models', '/cnn_bi_classifier_architecture.json')).read())
+model.load_weights(os.path.join('models', '/cnn_bi_classifier_weights.h5'))
 
-def connect_db():
-    """Connects to the specific database."""
-    rv = sqlite3.connect(app.config['DATABASE'])
-    rv.row_factory = sqlite3.Row
-    return rv
-
-
-def get_db():
-    """Opens a new database connection if there is none yet for the
-    current application context.
-    """
-    if not hasattr(g, 'sqlite_db'):
-        g.sqlite_db = connect_db()
-    return g.sqlite_db
-
-
-@app.teardown_appcontext
-def close_db(error):
-    """Closes the database again at the end of the request."""
-    if hasattr(g, 'sqlite_db'):
-        g.sqlite_db.close()
-
-
-def init_db():
-    db = get_db()
-    with app.open_resource('schema.sql', mode='r') as f:
-        db.cursor().executescript(f.read())
-    db.commit()
-
-
-@app.cli.command('initdb')
-def initdb_command():
-    """Initializes the database."""
-    init_db()
-    print('Initialized the database.')
+model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
 
 @app.route('/')
-def show_entries():
-    db = get_db()
-    cur = db.execute('select id, description, name from projects order by id desc')
-    entries = cur.fetchall()
-    return render_template('show_entries.html', entries=entries)
-
-
-@app.route('/add', methods=['POST'])
-def add_entry():
-    if not session.get('logged_in'):
-        abort(401)
-    db = get_db()
-    db.execute('insert into projects (name, description) values (?, ?)',
-                 [request.form['name'], request.form['description'], str(uuid.uuid4())])
-    db.commit()
-    flash('New entry was successfully posted')
-    return redirect(url_for('show_entries'))
-
-
-@app.route('/login', methods=['GET', 'POST'])
-def login():
-    error = None
-    if request.method == 'POST':
-        if request.form['username'] != app.config['USERNAME']:
-            error = 'Invalid username'
-        elif request.form['password'] != app.config['PASSWORD']:
-            error = 'Invalid password'
-        else:
-            session['logged_in'] = True
-            flash('You were logged in')
-            return redirect(url_for('show_entries'))
-    return render_template('login.html', error=error)
-
-
-@app.route('/logout')
-def logout():
-    session.pop('logged_in', None)
-    flash('You were logged out')
-    return redirect(url_for('show_entries'))
+def classifiers():
+    return render_template('classifiers.html')
 
 
 def allowed_file(filename):
@@ -108,8 +34,13 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
-@app.route('/projects/<token>/images', methods=['GET', 'POST'])
-def upload_file(token):
+@app.route('/about', methods=['GET'])
+def about():
+    return 'about us'
+
+
+@app.route('/cats_vs_dogs', methods=['GET', 'POST'])
+def cats_vs_dogs():
     if request.method == 'POST':
         # check if the post request has the file part
         if 'file' not in request.files:
@@ -124,29 +55,22 @@ def upload_file(token):
         if file and allowed_file(file.filename):
             filename = secure_filename(file.filename)
             file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('uploaded_file',
+            return redirect(url_for('cats_vs_dogs_result',
                                     filename=filename))
-    return '''
-    <!doctype html>
-    <title>Upload new File</title>
-    <h1>Upload new File</h1>
-    <form method=post enctype=multipart/form-bi_classifier_data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
-    '''
+    return render_template('cats_vs_dogs.html')
 
 
-@app.route('/uploads/<filename>')
-def uploaded_file(filename):
+@app.route('/cats_vs_dogs_result/<filename>')
+def cats_vs_dogs_result(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    return render_template('cats_vs_dogs_result.html', filename=filename)
+
+
+@app.route('/images/<filename>')
+def get_image(filename):
     return send_from_directory(app.config['UPLOAD_FOLDER'],
                                filename)
-
-@app.before_first_request
-def startup():
-    init_db()
 
 
 if __name__ == '__main__':
     app.run(debug=True)
-
