@@ -1,14 +1,14 @@
 import os
 from keras.models import model_from_json
-import sqlite3
-import uuid
+from PIL import Image
+import numpy as np
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '../uploads'
+UPLOAD_FOLDER = 'uploads'
 ALLOWED_EXTENSIONS = set(['txt', 'pdf', 'png', 'jpg', 'jpeg', 'gif'])
 
 app = Flask(__name__)  # create the application instance :)
@@ -18,10 +18,30 @@ app.config.from_object(__name__)  # load config from this file , flaskr.py
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-model = model_from_json(open(os.path.join('models', '/cnn_bi_classifier_architecture.json')).read())
-model.load_weights(os.path.join('models', '/cnn_bi_classifier_weights.h5'))
+model = model_from_json(open(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_architecture.json')).read())
+model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_weights.h5'))
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+
+
+def predict(filename):
+    img = Image.open(filename)
+    img = img.resize((150, 150), Image.ANTIALIAS)
+
+    input = np.asarray(img)
+    input = np.expand_dims(input, axis=0)
+
+    print(input.shape)
+
+    output = model.predict(input)
+
+    probability_of_a_dog = output[0][0]
+    predicted_label = ("Dog" if probability_of_a_dog > 0.5 else "Cat")
+    return probability_of_a_dog, predicted_label
+
+prob, label = predict('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
+print(prob)
+print(label)
 
 
 @app.route('/')
@@ -63,7 +83,9 @@ def cats_vs_dogs():
 @app.route('/cats_vs_dogs_result/<filename>')
 def cats_vs_dogs_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    return render_template('cats_vs_dogs_result.html', filename=filename)
+    probability_of_dog, predicted_label = predict(filepath)
+    return render_template('cats_vs_dogs_result.html', filename=filename,
+                           probability_of_dog=probability_of_dog, predicted_label=predicted_label)
 
 
 @app.route('/images/<filename>')

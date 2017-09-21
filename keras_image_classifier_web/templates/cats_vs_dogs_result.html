@@ -1,7 +1,10 @@
 {% extends "layout.html" %}
 {% block body %}
-    <form method=post enctype=multipart/form-data>
-      <p><input type=file name=file>
-         <input type=submit value=Upload>
-    </form>
+    <img src="/images/{{ filename }}" />
+    <br />
+    <hr />
+    I guess you have uploaded a {{ predicted_label }} picture, as the probability of this being a dog picture is
+    {{ probability_of_dog }}
+    <hr />
+    <a href="{{ url_for('cats_vs_dogs') }}">Try another picture</a>
 {% endblock %}
