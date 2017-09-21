@@ -1,7 +1,7 @@
 import os
-from keras.models import model_from_json
-from PIL import Image
-import numpy as np
+from keras_image_classifier_web.cnn_bi_classifier import BiClassifier
+from keras_image_classifier_web.cifar10_classifier import Cifar10Classifier
+from keras_image_classifier_web.vgg16_classifier import VGG16Classifier
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
@@ -18,68 +18,14 @@ app.config.from_object(__name__)  # load config from this file , flaskr.py
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-# load and configure the binary classifier model for "cats vs dogs"
-bi_model = model_from_json(
-    open(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_architecture.json')).read())
-bi_model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_weights.h5'))
+bi_classifier = BiClassifier()
+bi_classifier.run_test()
 
-bi_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+cifar10_classifier = Cifar10Classifier()
+cifar10_classifier.run_test()
 
-# load and configure the cifar19 classifier model
-cifar10_model = model_from_json(
-    open(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_architecture.json')).read())
-cifar10_model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_weights.h5'))
-
-cifar10_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-
-
-def predict_binary(filename):
-    img = Image.open(filename)
-    img = img.resize((150, 150), Image.ANTIALIAS)
-
-    input = np.asarray(img)
-    input = input.astype('float32') / 255
-    input = np.expand_dims(input, axis=0)
-
-    print(input.shape)
-
-    output = bi_model.predict(input)
-
-    probability_of_a_dog = output[0][0]
-    predicted_label = ("Dog" if probability_of_a_dog > 0.5 else "Cat")
-    return probability_of_a_dog, predicted_label
-
-
-def predict_cifar10(filename):
-    img = Image.open(filename)
-    img = img.resize((32, 32), Image.ANTIALIAS)
-
-    input = np.asarray(img)
-    input = input.astype('float32') / 255
-    input = np.expand_dims(input, axis=0)
-
-    print(input.shape)
-
-    predicted_class = cifar10_model.predict_classes(input)[0]
-
-    labels = [
-        "airplane",
-        "automobile",
-        "bird",
-        "cat",
-        "deer",
-        "dog",
-        "frog",
-        "horse",
-        "ship",
-        "truck"
-    ]
-    return predicted_class, labels[predicted_class]
-
-
-predict_binary('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
-predict_cifar10('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
-
+vgg16_classifier = VGG16Classifier()
+vgg16_classifier.run_test()
 
 
 @app.route('/')
@@ -92,6 +38,24 @@ def allowed_file(filename):
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 
+def store_uploaded_image(action):
+    # check if the post request has the file part
+    if 'file' not in request.files:
+        flash('No file part')
+        return redirect(request.url)
+    file = request.files['file']
+    # if user does not select file, browser also
+    # submit a empty part without filename
+    if file.filename == '':
+        flash('No selected file')
+        return redirect(request.url)
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        return redirect(url_for(action,
+                                filename=filename))
+
+
 @app.route('/about', methods=['GET'])
 def about():
     return 'about us'
@@ -100,49 +64,28 @@ def about():
 @app.route('/cats_vs_dogs', methods=['GET', 'POST'])
 def cats_vs_dogs():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('cats_vs_dogs_result',
-                                    filename=filename))
+        return store_uploaded_image('cats_vs_dogs_result')
     return render_template('cats_vs_dogs.html')
 
 
 @app.route('/cifar10', methods=['GET', 'POST'])
 def cifar10():
     if request.method == 'POST':
-        # check if the post request has the file part
-        if 'file' not in request.files:
-            flash('No file part')
-            return redirect(request.url)
-        file = request.files['file']
-        # if user does not select file, browser also
-        # submit a empty part without filename
-        if file.filename == '':
-            flash('No selected file')
-            return redirect(request.url)
-        if file and allowed_file(file.filename):
-            filename = secure_filename(file.filename)
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            return redirect(url_for('cifar10_result',
-                                    filename=filename))
+        return store_uploaded_image('cifar10_result')
     return render_template('cifar10.html')
+
+
+@app.route('/vgg16', methods=['GET', 'POST'])
+def vgg16():
+    if request.method == 'POST':
+        return store_uploaded_image('vgg16_result')
+    return render_template('vgg16.html')
 
 
 @app.route('/cats_vs_dogs_result/<filename>')
 def cats_vs_dogs_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    probability_of_dog, predicted_label = predict_binary(filepath)
+    probability_of_dog, predicted_label = bi_classifier.predict(filepath)
     return render_template('cats_vs_dogs_result.html', filename=filename,
                            probability_of_dog=probability_of_dog, predicted_label=predicted_label)
 
@@ -150,9 +93,17 @@ def cats_vs_dogs_result(filename):
 @app.route('/cifar10_result/<filename>')
 def cifar10_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    predicted_class, predicted_label = predict_cifar10(filepath)
+    predicted_class, predicted_label = cifar10_classifier.predict(filepath)
     return render_template('cifar10_result.html', filename=filename,
                            predicted_class=predicted_class, predicted_label=predicted_label)
+
+
+@app.route('/vgg16_result/<filename>')
+def vgg16_result(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    top3 = vgg16_classifier.predict(filepath)
+    return render_template('vgg16_result.html', filename=filename,
+                           top3=top3)
 
 
 @app.route('/images/<filename>')
