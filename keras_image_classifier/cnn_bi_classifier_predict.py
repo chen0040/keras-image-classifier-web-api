@@ -15,6 +15,7 @@ def predict(filename, label):
     img = img.resize((150, 150), Image.ANTIALIAS)
 
     input = np.asarray(img)
+    input = input.astype('float32') / 255
     input = np.expand_dims(input, axis=0)
 
     print(input.shape)

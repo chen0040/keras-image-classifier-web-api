@@ -18,30 +18,68 @@ app.config.from_object(__name__)  # load config from this file , flaskr.py
 app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
-model = model_from_json(open(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_architecture.json')).read())
-model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_weights.h5'))
+# load and configure the binary classifier model for "cats vs dogs"
+bi_model = model_from_json(
+    open(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_architecture.json')).read())
+bi_model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_bi_classifier_weights.h5'))
 
-model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+bi_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
+
+# load and configure the cifar19 classifier model
+cifar10_model = model_from_json(
+    open(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_architecture.json')).read())
+cifar10_model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_weights.h5'))
+
+cifar10_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
 
-def predict(filename):
+def predict_binary(filename):
     img = Image.open(filename)
     img = img.resize((150, 150), Image.ANTIALIAS)
 
     input = np.asarray(img)
+    input = input.astype('float32') / 255
     input = np.expand_dims(input, axis=0)
 
     print(input.shape)
 
-    output = model.predict(input)
+    output = bi_model.predict(input)
 
     probability_of_a_dog = output[0][0]
     predicted_label = ("Dog" if probability_of_a_dog > 0.5 else "Cat")
     return probability_of_a_dog, predicted_label
 
-prob, label = predict('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
-print(prob)
-print(label)
+
+def predict_cifar10(filename):
+    img = Image.open(filename)
+    img = img.resize((32, 32), Image.ANTIALIAS)
+
+    input = np.asarray(img)
+    input = input.astype('float32') / 255
+    input = np.expand_dims(input, axis=0)
+
+    print(input.shape)
+
+    predicted_class = cifar10_model.predict_classes(input)[0]
+
+    labels = [
+        "airplane",
+        "automobile",
+        "bird",
+        "cat",
+        "deer",
+        "dog",
+        "frog",
+        "horse",
+        "ship",
+        "truck"
+    ]
+    return predicted_class, labels[predicted_class]
+
+
+predict_binary('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
+predict_cifar10('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg')
+
 
 
 @app.route('/')
@@ -80,12 +118,41 @@ def cats_vs_dogs():
     return render_template('cats_vs_dogs.html')
 
 
+@app.route('/cifar10', methods=['GET', 'POST'])
+def cifar10():
+    if request.method == 'POST':
+        # check if the post request has the file part
+        if 'file' not in request.files:
+            flash('No file part')
+            return redirect(request.url)
+        file = request.files['file']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file')
+            return redirect(request.url)
+        if file and allowed_file(file.filename):
+            filename = secure_filename(file.filename)
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            return redirect(url_for('cifar10_result',
+                                    filename=filename))
+    return render_template('cifar10.html')
+
+
 @app.route('/cats_vs_dogs_result/<filename>')
 def cats_vs_dogs_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    probability_of_dog, predicted_label = predict(filepath)
+    probability_of_dog, predicted_label = predict_binary(filepath)
     return render_template('cats_vs_dogs_result.html', filename=filename,
                            probability_of_dog=probability_of_dog, predicted_label=predicted_label)
+
+
+@app.route('/cifar10_result/<filename>')
+def cifar10_result(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    predicted_class, predicted_label = predict_cifar10(filepath)
+    return render_template('cifar10_result.html', filename=filename,
+                           predicted_class=predicted_class, predicted_label=predicted_label)
 
 
 @app.route('/images/<filename>')
