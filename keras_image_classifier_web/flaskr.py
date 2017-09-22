@@ -86,7 +86,7 @@ def vgg16():
 
 
 @app.route('/vgg19', methods=['GET', 'POST'])
-def vgg16():
+def vgg19():
     if request.method == 'POST':
         return store_uploaded_image('vgg19_result')
     return render_template('vgg19.html')
