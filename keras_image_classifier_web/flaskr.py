@@ -2,6 +2,7 @@ import os
 from keras_image_classifier_web.cnn_bi_classifier import BiClassifier
 from keras_image_classifier_web.cifar10_classifier import Cifar10Classifier
 from keras_image_classifier_web.vgg16_classifier import VGG16Classifier
+from keras_image_classifier_web.vgg19_classifier import VGG19Classifier
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
@@ -27,6 +28,8 @@ cifar10_classifier.run_test()
 vgg16_classifier = VGG16Classifier()
 vgg16_classifier.run_test()
 
+vgg19_classifier = VGG19Classifier()
+vgg19_classifier.run_test()
 
 @app.route('/')
 def classifiers():
@@ -82,6 +85,13 @@ def vgg16():
     return render_template('vgg16.html')
 
 
+@app.route('/vgg19', methods=['GET', 'POST'])
+def vgg16():
+    if request.method == 'POST':
+        return store_uploaded_image('vgg19_result')
+    return render_template('vgg19.html')
+
+
 @app.route('/cats_vs_dogs_result/<filename>')
 def cats_vs_dogs_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -103,6 +113,14 @@ def vgg16_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     top3 = vgg16_classifier.predict(filepath)
     return render_template('vgg16_result.html', filename=filename,
+                           top3=top3)
+
+
+@app.route('/vgg19_result/<filename>')
+def vgg19_result(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    top3 = vgg19_classifier.predict(filepath)
+    return render_template('vgg19_result.html', filename=filename,
                            top3=top3)
 
 
