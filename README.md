@@ -10,6 +10,26 @@ Run the following command to install the keras, flask and other dependency modul
 sudo pip install -r requirements.txt
 ```
 
+## Training (Optional)
+
+As the trained models are already included in the "keras_image_classifier/models" folder in the project, the training is
+not required. However, if you like to tune the parameters and retrain the models, you can use the 
+following command to run the training:
+
+```bash
+cd translator_train
+python cnn_cifar10_train.py
+```
+
+The above commands will train dcnn model on the cifar10 dataset 
+dataset and store the trained model in "keras_image_classifier/models/cnn_cifar10_**"
+
+If you like to train other models, you can use the same command above on another train python scripts:
+
+* cnn_bi_classifier.py: a simple cnn bi-class classifier trained using data in the "keras_image_classifier/bi-classifier_data" folder
+
+## Running Web Api Server
+
 Goto keras_image_classifier_web directory and run the following command:
 
 ```bash
