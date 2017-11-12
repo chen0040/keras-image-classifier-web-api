@@ -24,3 +24,7 @@ class VGG16Classifier:
 
     def run_test(self):
         print(self.predict('../keras_image_classifier/bi_classifier_data/training/cat/cat.3.jpg'))
+
+if __name__ == '__main__':
+    classifier = VGG16Classifier()
+    classifier.run_test()

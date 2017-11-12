@@ -43,6 +43,7 @@ trained classifiers:
 * multi-class DCNN classifier trained with CIFAR-10 data
 * multi-class VGG16 classifier trained with ImageNet data
 * multi-class VGG19 classifier trained with ImageNet data
+* multi-class Residual Network classifier trained with ImageNet data
 
 
 

@@ -3,6 +3,7 @@ from keras_image_classifier_web.cnn_bi_classifier import BiClassifier
 from keras_image_classifier_web.cifar10_classifier import Cifar10Classifier
 from keras_image_classifier_web.vgg16_classifier import VGG16Classifier
 from keras_image_classifier_web.vgg19_classifier import VGG19Classifier
+from keras_image_classifier_web.resnet50_classifier import ResNet50Classifier
 
 from flask import Flask, request, session, g, redirect, url_for, abort, \
     render_template, flash
@@ -30,6 +31,10 @@ vgg16_classifier.run_test()
 
 vgg19_classifier = VGG19Classifier()
 vgg19_classifier.run_test()
+
+resnet50_classifier = ResNet50Classifier()
+resnet50_classifier.run_test()
+
 
 @app.route('/')
 def classifiers():
@@ -92,6 +97,13 @@ def vgg19():
     return render_template('vgg19.html')
 
 
+@app.route('/resnet50', methods=['GET', 'POST'])
+def resnet50():
+    if request.method == 'POST':
+        return store_uploaded_image('resnet50_result')
+    return render_template('resnet50.html')
+
+
 @app.route('/cats_vs_dogs_result/<filename>')
 def cats_vs_dogs_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
@@ -121,6 +133,14 @@ def vgg19_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     top3 = vgg19_classifier.predict(filepath)
     return render_template('vgg19_result.html', filename=filename,
+                           top3=top3)
+
+
+@app.route('/resnet50_result/<filename>')
+def resnet50_result(filename):
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    top3 = resnet50_classifier.predict(filepath)
+    return render_template('resnet50_result.html', filename=filename,
                            top3=top3)
 
 
