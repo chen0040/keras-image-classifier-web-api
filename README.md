@@ -17,7 +17,7 @@ not required. However, if you like to tune the parameters and retrain the models
 following command to run the training:
 
 ```bash
-cd translator_train
+cd keras_image_classifier_train
 python cnn_cifar10_train.py
 ```
 

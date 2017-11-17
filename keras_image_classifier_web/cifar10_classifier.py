@@ -9,8 +9,8 @@ class Cifar10Classifier:
     def __init__(self):
         # load and configure the cifar19 classifier model
         self.cifar10_model = model_from_json(
-            open(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_architecture.json')).read())
-        self.cifar10_model.load_weights(os.path.join('../keras_image_classifier/models', 'cnn_cifar10_weights.h5'))
+            open(os.path.join('../keras_image_classifier_train/models', 'cnn_cifar10_architecture.json')).read())
+        self.cifar10_model.load_weights(os.path.join('../keras_image_classifier_train/models', 'cnn_cifar10_weights.h5'))
         self.cifar10_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
     def predict(self, filename):
@@ -40,4 +40,4 @@ class Cifar10Classifier:
         return predicted_class, labels[predicted_class]
 
     def run_test(self):
-        print(self.predict('../keras_image_classifier/bi_classifier_data/training/cat/cat.2.jpg'))
+        print(self.predict('../keras_image_classifier_train/bi_classifier_data/training/cat/cat.2.jpg'))
