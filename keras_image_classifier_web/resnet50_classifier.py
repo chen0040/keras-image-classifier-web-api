@@ -26,6 +26,9 @@ class ResNet50Classifier:
         print(self.predict('../keras_image_classifier_train/bi_classifier_data/training/cat/cat.3.jpg'))
 
 
-if __name__ == '__main__':
+def main():
     classifier = ResNet50Classifier()
     classifier.run_test()
+
+if __name__ == '__main__':
+    main()

@@ -21,19 +21,11 @@ app.config.from_envvar('FLASKR_SETTINGS', silent=True)
 app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024
 
 bi_classifier = BiClassifier()
-bi_classifier.run_test()
-
 cifar10_classifier = Cifar10Classifier()
-cifar10_classifier.run_test()
-
 vgg16_classifier = VGG16Classifier()
-vgg16_classifier.run_test()
-
 vgg19_classifier = VGG19Classifier()
-vgg19_classifier.run_test()
-
 resnet50_classifier = ResNet50Classifier()
-resnet50_classifier.run_test()
+
 
 
 @app.route('/')
@@ -150,5 +142,13 @@ def get_image(filename):
                                filename)
 
 
-if __name__ == '__main__':
+def main():
+    bi_classifier.run_test()
+    cifar10_classifier.run_test()
+    vgg16_classifier.run_test()
+    vgg19_classifier.run_test()
+    resnet50_classifier.run_test()
     app.run(debug=True)
+
+if __name__ == '__main__':
+    main()
