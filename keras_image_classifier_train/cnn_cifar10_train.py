@@ -4,6 +4,7 @@ from keras.utils import np_utils
 from keras.preprocessing.image import ImageDataGenerator
 from keras.datasets import cifar10
 import keras.backend as K
+from keras.callbacks import ModelCheckpoint
 
 train_data_dir = 'multi_classifier_data/training'
 validation_data_dir = 'multi_classifier_data/validation'
@@ -11,6 +12,7 @@ img_width, img_height = 32, 32
 batch_size = 128
 epochs= 20
 nb_classes = 10
+WEIGHT_FILE_PATH = 'models/cnn_cifar10_weights.h5'
 
 (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 
@@ -54,14 +56,17 @@ model.add(Dense(units=nb_classes))
 model.add(Activation('softmax'))
 
 model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
-model.fit(x=Xtrain, y=Ytrain, batch_size=batch_size, epochs=epochs, verbose=1, validation_split=0.2)
+
+json = model.to_json()
+open('models/cnn_cifar10_architecture.json', 'w').write(json)
+
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
+model.fit(x=Xtrain, y=Ytrain, batch_size=batch_size, epochs=epochs, verbose=1, validation_split=0.2, callbacks=[checkpoint])
 
 score = model.evaluate(x=Xtest, y=Ytest, batch_size=batch_size, verbose=1)
 
 print('score: ', score[0])
 print('accurarcy: ', score[1])
 
-json = model.to_json()
-open('models/cnn_cifar10_architecture.json', 'w').write(json)
-model.save_weights('models/cnn_cifar10_weights.h5', overwrite=True)
+model.save_weights(WEIGHT_FILE_PATH, overwrite=True)
 

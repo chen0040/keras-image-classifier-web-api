@@ -2,6 +2,7 @@ from keras.preprocessing.image import ImageDataGenerator
 from keras.models import Sequential
 from keras.layers import Conv2D, MaxPooling2D, Activation, Flatten, Dense, Dropout
 from keras import backend as K
+from keras.callbacks import ModelCheckpoint
 
 img_width, img_height = 150, 150
 
@@ -12,6 +13,7 @@ nb_validation_samples = 800
 nb_test_samples = 400
 epochs = 50
 batch_size = 16
+WEIGHT_FILE_PATH = 'models/cnn_bi_classifier_weights.h5'
 
 if K.image_data_format() == 'channels_first':
     input_shape = (3, img_width, img_height)
@@ -39,6 +41,9 @@ model.add(Activation('sigmoid'))
 
 model.compile(loss='binary_crossentropy', optimizer='rmsprop', metrics=['accuracy'])
 
+model_json = model.to_json()
+open('models/cnn_bi_classifier_architecture.json','w').write(model_json)
+
 train_datagen = ImageDataGenerator(
     rescale=1./255,
     shear_range=0.2,
@@ -64,13 +69,14 @@ validation_generator = validation_datagen.flow_from_directory(
     class_mode='binary'
 )
 
+checkpoint = ModelCheckpoint(filepath=WEIGHT_FILE_PATH, save_best_only=True)
 model.fit_generator(train_generator,
                     steps_per_epoch=nb_train_samples // batch_size,
                     epochs=epochs,
                     validation_data=validation_generator,
-                    validation_steps=nb_validation_samples // batch_size)
+                    validation_steps=nb_validation_samples // batch_size,
+                    callbacks=[checkpoint])
 
-model_json = model.to_json()
-open('models/cnn_bi_classifier_architecture.json','w').write(model_json)
-model.save_weights('models/cnn_bi_classifier_weights.h5', overwrite=True)
+
+model.save_weights(WEIGHT_FILE_PATH, overwrite=True)
 
