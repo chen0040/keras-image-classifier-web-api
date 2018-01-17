@@ -7,9 +7,7 @@ __pycache__/
 # C extensions
 *.so
 
-keras_image_classifier_web/keras_image_projects.db
-keras_image_classifier/testing/
-keras_image_classifier/training/
+keras_image_classifier/web/keras_image_projects.db
 
 # Distribution / packaging
 .Python
@@ -32,7 +30,7 @@ wheels/
 
 Thumbs.db
 
-keras_image_classifier_web/uploads
+keras_image_classifier/web/uploads
 
 # PyInstaller
 #  Usually these files are written by a python script from a template

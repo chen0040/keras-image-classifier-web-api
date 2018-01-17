@@ -1,12 +1,11 @@
 import os
-from keras_image_classifier_web.cnn_bi_classifier import BiClassifier
-from keras_image_classifier_web.cifar10_classifier import Cifar10Classifier
-from keras_image_classifier_web.vgg16_classifier import VGG16Classifier
-from keras_image_classifier_web.vgg19_classifier import VGG19Classifier
-from keras_image_classifier_web.resnet50_classifier import ResNet50Classifier
+from keras_image_classifier.library.cnn_bi_classifier import BiClassifier
+from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
+from keras_image_classifier.library.vgg16_classifier import VGG16Classifier
+from keras_image_classifier.library.vgg19_classifier import VGG19Classifier
+from keras_image_classifier.library.resnet50_classifier import ResNet50Classifier
 
-from flask import Flask, request, session, g, redirect, url_for, abort, \
-    render_template, flash
+from flask import Flask, request, redirect, url_for, render_template, flash
 from flask import send_from_directory
 from werkzeug.utils import secure_filename
 

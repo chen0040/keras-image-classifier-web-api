@@ -17,7 +17,7 @@ not required. However, if you like to tune the parameters and retrain the models
 following command to run the training:
 
 ```bash
-cd keras_image_classifier_train
+cd keras_image_classifier/training
 python cnn_cifar10_train.py
 ```
 
@@ -30,7 +30,7 @@ If you like to train other models, you can use the same command above on another
 
 ## Running Web Api Server
 
-Goto keras_image_classifier_web directory and run the following command:
+Goto keras_image_classifier/web directory and run the following command:
 
 ```bash
 python flaskr.py

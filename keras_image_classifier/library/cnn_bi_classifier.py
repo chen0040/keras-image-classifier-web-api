@@ -10,12 +10,12 @@ class BiClassifier(object):
     def __init__(self):
         # load and configure the binary classifier model for "cats vs dogs"
         self.bi_model = model_from_json(
-            open(os.path.join('../keras_image_classifier_train/models', 'cnn_bi_classifier_architecture.json')).read())
-        self.bi_model.load_weights(os.path.join('../keras_image_classifier_train/models', 'cnn_bi_classifier_weights.h5'))
+            open(os.path.join('../training/models', 'cnn_bi_classifier_architecture.json')).read())
+        self.bi_model.load_weights(os.path.join('../training/models', 'cnn_bi_classifier_weights.h5'))
         self.bi_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
     def run_test(self):
-        print(self.predict('../keras_image_classifier_train/bi_classifier_data/training/cat/cat.2.jpg'))
+        print(self.predict('../training/bi_classifier_data/training/cat/cat.2.jpg'))
 
     def predict(self, filename):
         img = Image.open(filename)

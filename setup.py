@@ -1,8 +1,8 @@
 from setuptools import setup
 
 setup(
-    name='keras_image_classifier_web',
-    packages=['keras_image_classifier_web'],
+    name='web',
+    packages=['web'],
     include_package_data=True,
     install_requires=[
         'flask',

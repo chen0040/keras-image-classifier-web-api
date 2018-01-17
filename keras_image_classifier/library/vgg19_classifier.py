@@ -23,7 +23,7 @@ class VGG19Classifier:
         return output[0]
 
     def run_test(self):
-        print(self.predict('../keras_image_classifier_train/bi_classifier_data/training/cat/cat.3.jpg'))
+        print(self.predict('../training/bi_classifier_data/training/cat/cat.3.jpg'))
 
 
 def main():
