@@ -8,7 +8,7 @@ from keras.utils.data_utils import get_file
 from keras.applications.imagenet_utils import preprocess_input
 from keras.utils.vis_utils import model_to_dot
 from keras.utils import plot_model
-from keras_image_classifier.resnets_utils import *
+from keras_image_classifier.library.resnets_utils import *
 from keras.initializers import glorot_uniform
 import scipy.misc
 import keras.backend as K
@@ -239,6 +239,12 @@ def ResNet50_test():
     print("Y_train shape: " + str(Y_train.shape))
     print("X_test shape: " + str(X_test.shape))
     print("Y_test shape: " + str(Y_test.shape))
+
+    model.fit(X_train, Y_train, epochs=2, batch_size=32)
+
+    preds = model.evaluate(X_test, Y_test)
+    print("Loss = " + str(preds[0]))
+    print("Test Accuracy = " + str(preds[1]))
 
 
 def main():
