@@ -7,8 +7,8 @@ from keras.utils import np_utils
 
 # load and configure the cifar19 classifier model
 cifar10_model = model_from_json(
-    open(os.path.join('../training/models', 'cnn_cifar10_architecture.json')).read())
-cifar10_model.load_weights(os.path.join('../training/models', 'cnn_cifar10_weights.h5'))
+    open(os.path.join('./models', 'cnn_cifar10_architecture.json')).read())
+cifar10_model.load_weights(os.path.join('./models', 'cnn_cifar10_weights.h5'))
 
 cifar10_model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
 
