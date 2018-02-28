@@ -45,7 +45,13 @@ class Cifar10Classifier:
 
     def predict_label(self, filename):
         img = Image.open(filename)
-        img = img.resize((32, 32), Image.ANTIALIAS)
+
+        if K.image_data_format() == 'channels_first':
+            _, img_width, img_height = self.input_shape
+        else:
+            img_width, img_height, _ = self.input_shape
+
+        img = img.resize((img_width, img_height), Image.ANTIALIAS)
 
         input = np.asarray(img)
         input = input.astype('float32') / 255
