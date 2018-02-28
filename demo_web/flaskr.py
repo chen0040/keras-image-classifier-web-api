@@ -106,7 +106,7 @@ def cats_vs_dogs_result(filename):
 @app.route('/cifar10_result/<filename>')
 def cifar10_result(filename):
     filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-    predicted_class, predicted_label = cifar10_classifier.predict(filepath)
+    predicted_class, predicted_label = cifar10_classifier.predict_label(filepath)
     return render_template('cifar10_result.html', filename=filename,
                            predicted_class=predicted_class, predicted_label=predicted_label)
 
