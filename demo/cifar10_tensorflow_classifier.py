@@ -23,11 +23,11 @@ def main():
 
         for i in range(Xtest.shape[0]):
             x = Xtest[i]
-            x = x.astype(np.float) / 255
             x = np.expand_dims(x, axis=0)
             y = Ytest[i]
             predicted = sess.run(predict_op, feed_dict={"conv2d_1_input:0": x,
                                                         'dropout_1/keras_learning_phase:0': 0})
+
             predicted_y = np.argmax(predicted, axis=1)
             print('actual: ', y, '\tpredicted: ', predicted_y)
 
