@@ -5,4 +5,4 @@ numpy
 h5py
 pillow
 scikit-learn
-tensorflow
+tensorflow == 1.6.0rc1

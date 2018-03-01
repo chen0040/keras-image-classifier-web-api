@@ -40,8 +40,9 @@ class Cifar10Classifier:
         self.nb_classes = config['nb_classes']
 
         self.model = model_from_json(open(self.get_architecture_file_path(model_dir_path)).read())
-        self.model.load_weights(self.get_weight_file_path(model_dir_path))
         self.model.compile(optimizer='rmsprop', loss='categorical_crossentropy', metrics=['accuracy'])
+        self.model.load_weights(self.get_weight_file_path(model_dir_path))
+
 
     def predict_label(self, filename):
         img = Image.open(filename)

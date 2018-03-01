@@ -26,6 +26,7 @@ def predict_cifar10(filename):
     output = cifar10_model.predict_classes(input)[0]
     return output
 
+
 (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 
 Xtest = Xtest.astype('float32') / 255

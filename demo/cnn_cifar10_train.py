@@ -30,7 +30,7 @@ def main():
     print('score: ', score[0])
     print('accurarcy: ', score[1])
 
-    classifier.export_tensorflow_model(output_fld='./models/tf')
+
 
 
 if __name__ == '__main__':
