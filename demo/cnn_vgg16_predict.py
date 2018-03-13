@@ -19,7 +19,7 @@ def predict(filename):
     print(output)
 
 
-current_dir = os.path.join(os.path.dirname(__file__))
+current_dir = os.path.dirname(__file__)
 
 for i in range(100):
     predict(current_dir + '/bi_classifier_data/training/cat/cat.' + str(i) + '.jpg')

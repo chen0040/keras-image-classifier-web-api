@@ -12,7 +12,7 @@ def main():
     batch_size = 128
     epochs = 20
     nb_classes = 10
-    current_dir = os.path.join(os.path.dirname(__file__))
+    current_dir = os.path.dirname(__file__)
 
     output_dir_path = os.path.join(current_dir, 'models')
 

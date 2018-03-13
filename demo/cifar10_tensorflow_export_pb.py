@@ -6,7 +6,7 @@ def main():
     sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
     from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
 
-    current_dir = os.path.join(os.path.dirname(__file__))
+    current_dir = os.path.dirname(__file__)
 
     classifier = Cifar10Classifier()
     classifier.load_model(os.path.join(current_dir, 'models'))

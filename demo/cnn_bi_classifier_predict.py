@@ -4,7 +4,7 @@ from PIL import Image
 import numpy as np
 import os
 
-current_dir = os.path.join(os.path.dirname(__file__))
+current_dir = os.path.dirname(__file__)
 
 json = open(current_dir + '/models/cnn_bi_classifier_architecture.json', 'r').read()
 

@@ -6,7 +6,7 @@ import os
 
 def main():
 
-    current_dir = os.path.join(os.path.dirname(__file__))
+    current_dir = os.path.dirname(__file__)
     (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 
     Xtest = Xtest.astype('float32') / 255

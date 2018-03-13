@@ -2,7 +2,7 @@ from PIL import Image
 import os
 from os import path
 
-current_dir = os.path.join(os.path.dirname(__file__))
+current_dir = os.path.dirname(__file__)
 
 train_data_dir = current_dir + '/bi_classifier_data/training'
 validation_data_dir = current_dir + '/bi_classifier_data/validation'
