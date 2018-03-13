@@ -4,6 +4,7 @@ from keras.optimizers import SGD
 from PIL import Image
 from keras.preprocessing.image import img_to_array
 import numpy as np
+import os
 
 model = VGG19(include_top=True, weights='imagenet')
 model.compile(optimizer=SGD(), loss='categorical_crossentropy', metrics=['accuracy'])
@@ -20,5 +21,6 @@ def predict(filename):
 
 
 for i in range(100):
-    predict('bi_classifier_data/training/cat/cat.' + str(i) + '.jpg')
-    predict('bi_classifier_data/training/dog/dog.' + str(i) + '.jpg')
+    current_dir = os.path.join(os.path.dirname(__file__))
+    predict(current_dir + '/bi_classifier_data/training/cat/cat.' + str(i) + '.jpg')
+    predict(current_dir + '/bi_classifier_data/training/dog/dog.' + str(i) + '.jpg')

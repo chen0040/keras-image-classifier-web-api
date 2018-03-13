@@ -2,15 +2,19 @@ from PIL import Image
 import os
 from os import path
 
-train_data_dir = 'bi_classifier_data/training'
-validation_data_dir = 'bi_classifier_data/validation'
-test_data_dir = 'bi_classifier_data/testing'
+current_dir = os.path.join(os.path.dirname(__file__))
+
+train_data_dir = current_dir + '/bi_classifier_data/training'
+validation_data_dir = current_dir + '/bi_classifier_data/validation'
+test_data_dir = current_dir + '/bi_classifier_data/testing'
+
 
 def resize(file):
     print('resizing ' + file)
     img = Image.open(file)
     img = img.resize((150, 150), Image.ANTIALIAS)
     img.save(file)
+
 
 def resizeAllInFolder(folder):
     for dir in os.listdir(folder):

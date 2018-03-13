@@ -2,11 +2,14 @@ from keras.models import model_from_json
 from keras.preprocessing.image import load_img, img_to_array
 from PIL import Image
 import numpy as np
+import os
 
-json = open('models/cnn_bi_classifier_architecture.json', 'r').read()
+current_dir = os.path.join(os.path.dirname(__file__))
+
+json = open(current_dir + '/models/cnn_bi_classifier_architecture.json', 'r').read()
 
 model = model_from_json(json)
-model.load_weights('models/cnn_bi_classifier_weights.h5')
+model.load_weights(current_dir + '/models/cnn_bi_classifier_weights.h5')
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
@@ -28,5 +31,5 @@ def predict(filename, label):
 
 
 for i in range(100):
-    predict('bi_classifier_data/training/cat/cat.' + str(i) + '.jpg', 'cat')
-    predict('bi_classifier_data/training/dog/dog.' + str(i) + '.jpg', 'dog')
+    predict(current_dir + '/bi_classifier_data/training/cat/cat.' + str(i) + '.jpg', 'cat')
+    predict(current_dir + '/bi_classifier_data/training/dog/dog.' + str(i) + '.jpg', 'dog')

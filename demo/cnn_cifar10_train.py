@@ -12,7 +12,9 @@ def main():
     batch_size = 128
     epochs = 20
     nb_classes = 10
-    output_dir_path = os.path.join(os.path.dirname(__file__), 'models')
+    current_dir = os.path.join(os.path.dirname(__file__))
+
+    output_dir_path = os.path.join(current_dir, 'models')
 
     (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 
@@ -32,8 +34,6 @@ def main():
 
     print('score: ', score[0])
     print('accurarcy: ', score[1])
-
-
 
 
 if __name__ == '__main__':
