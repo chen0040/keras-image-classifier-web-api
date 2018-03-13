@@ -1,15 +1,18 @@
 from keras.datasets import cifar10
 import keras.backend as K
-
-from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
+import os
+import sys
 
 
 def main():
+    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
+
     img_width, img_height = 32, 32
     batch_size = 128
     epochs = 20
     nb_classes = 10
-    output_dir_path = './models'
+    output_dir_path = os.path.join(os.path.dirname(__file__), 'models')
 
     (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 

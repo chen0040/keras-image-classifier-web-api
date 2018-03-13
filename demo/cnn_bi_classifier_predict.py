@@ -10,6 +10,7 @@ model.load_weights('models/cnn_bi_classifier_weights.h5')
 
 model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
+
 def predict(filename, label):
     img = Image.open(filename)
     img = img.resize((150, 150), Image.ANTIALIAS)
@@ -29,5 +30,3 @@ def predict(filename, label):
 for i in range(100):
     predict('bi_classifier_data/training/cat/cat.' + str(i) + '.jpg', 'cat')
     predict('bi_classifier_data/training/dog/dog.' + str(i) + '.jpg', 'dog')
-
-

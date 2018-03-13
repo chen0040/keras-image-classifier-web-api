@@ -1,18 +1,17 @@
 import tensorflow as tf
 import numpy as np
 from keras.datasets import cifar10
-
-from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
+import os
 
 
 def main():
 
-
+    current_dir = os.path.join(os.path.dirname(__file__))
     (Xtrain, Ytrain), (Xtest, Ytest) = cifar10.load_data()
 
     Xtest = Xtest.astype('float32') / 255
 
-    with tf.gfile.FastGFile('./models/tf/cnn_cifar10.pb', 'rb') as f:
+    with tf.gfile.FastGFile(current_dir + '/models/tf/cnn_cifar10.pb', 'rb') as f:
         graph_def = tf.GraphDef()
         graph_def.ParseFromString(f.read())
         _ = tf.import_graph_def(graph_def, name='')
