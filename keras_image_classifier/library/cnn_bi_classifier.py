@@ -14,8 +14,8 @@ class BiClassifier(object):
         self.bi_model.load_weights(os.path.join('../training/models', 'cnn_bi_classifier_weights.h5'))
         self.bi_model.compile(optimizer='rmsprop', loss='binary_crossentropy', metrics=['accuracy'])
 
-    def run_test(self):
-        print(self.predict('../training/bi_classifier_data/training/cat/cat.2.jpg'))
+    def run_test(self, current_dir):
+        print(self.predict(current_dir + '/../training/bi_classifier_data/training/cat/cat.2.jpg'))
 
     def predict(self, filename):
         img = Image.open(filename)

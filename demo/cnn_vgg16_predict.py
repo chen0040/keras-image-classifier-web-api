@@ -20,6 +20,7 @@ def predict(filename):
 
 
 current_dir = os.path.dirname(__file__)
+current_dir = current_dir if current_dir is not '' else '.'
 
 for i in range(100):
     predict(current_dir + '/bi_classifier_data/training/cat/cat.' + str(i) + '.jpg')

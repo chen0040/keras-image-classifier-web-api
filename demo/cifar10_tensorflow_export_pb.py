@@ -3,13 +3,14 @@ import os
 
 
 def main():
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+
     from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
 
-    current_dir = os.path.dirname(__file__)
-
     classifier = Cifar10Classifier()
-    classifier.load_model(os.path.join(current_dir, 'models'))
+    classifier.load_model(current_dir + '/models')
     classifier.export_tensorflow_model(output_fld=os.path.join(current_dir, 'models', 'tf'))
 
 

@@ -22,13 +22,5 @@ class VGG16Classifier:
         output = decode_predictions(self.model.predict(input), top=3)
         return output[0]
 
-    def run_test(self):
-        print(self.predict('../training/bi_classifier_data/training/cat/cat.3.jpg'))
-
-
-def main():
-    classifier = VGG16Classifier()
-    classifier.run_test()
-
-if __name__ == '__main__':
-    main()
+    def run_test(self, current_dir):
+        print(self.predict(current_dir + '/../training/bi_classifier_data/training/cat/cat.3.jpg'))

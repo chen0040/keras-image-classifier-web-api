@@ -7,6 +7,7 @@ from keras.utils import np_utils
 
 # load and configure the cifar19 classifier model
 current_dir = os.path.dirname(__file__)
+current_dir = current_dir if current_dir is not '' else '.'
 
 cifar10_model = model_from_json(
     open(os.path.join(current_dir, 'models', 'cnn_cifar10_architecture.json')).read())

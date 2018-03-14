@@ -5,14 +5,16 @@ import sys
 
 
 def main():
-    sys.path.append(os.path.join(os.path.dirname(__file__), '..'))
+    current_dir = os.path.dirname(__file__)
+    sys.path.append(os.path.join(current_dir, '..'))
+    current_dir = current_dir if current_dir is not '' else '.'
+
     from keras_image_classifier.library.cifar10_classifier import Cifar10Classifier
 
     img_width, img_height = 32, 32
     batch_size = 128
     epochs = 20
     nb_classes = 10
-    current_dir = os.path.dirname(__file__)
 
     output_dir_path = os.path.join(current_dir, 'models')
 

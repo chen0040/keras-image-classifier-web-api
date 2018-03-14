@@ -110,8 +110,8 @@ class Cifar10Classifier:
 
         return model
 
-    def run_test(self):
-        print(self.predict_label('../training/bi_classifier_data/training/cat/cat.2.jpg'))
+    def run_test(self, current_dir):
+        print(self.predict_label(current_dir + '/../training/bi_classifier_data/training/cat/cat.2.jpg'))
 
     def fit(self, Xtrain, Ytrain, model_dir_path, input_shape=None, nb_classes=None, test_size=None, batch_size=None,
             epochs=None):

@@ -3,6 +3,7 @@ import os
 from os import path
 
 current_dir = os.path.dirname(__file__)
+current_dir = current_dir if current_dir is not '' else '.'
 
 train_data_dir = current_dir + '/bi_classifier_data/training'
 validation_data_dir = current_dir + '/bi_classifier_data/validation'

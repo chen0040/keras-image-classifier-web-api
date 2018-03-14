@@ -5,6 +5,7 @@ import numpy as np
 import os
 
 current_dir = os.path.dirname(__file__)
+current_dir = current_dir if current_dir is not '' else '.'
 
 json = open(current_dir + '/models/cnn_bi_classifier_architecture.json', 'r').read()
 
